@@ -23,6 +23,9 @@ word_values = {
     "nine": "9",
 }
 
+values_part1 = digit_values
+values_part2 = {**digit_values, **word_values}
+
 
 def parse_input(stream):
     return stream.readlines()
@@ -48,24 +51,9 @@ def solve(input, values):
     return calibration_value
 
 
-values_part1 = digit_values
-values_part2 = {**digit_values, **word_values}
-
-
 def solve_part1(input):
     return solve(input, values_part1)
 
 
 def solve_part2(input):
     return solve(input, values_part2)
-
-
-if __name__ == "__main__":
-    with open("input.txt") as stream:
-        input = parse_input(stream)
-
-    solution_part1 = solve_part1(input)
-    print(f"Solution: {solution_part1}")
-
-    solution_part2 = solve_part2(input)
-    print(f"Solution: {solution_part2}")

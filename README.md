@@ -1,7 +1,8 @@
-From folder:
+Move to day folder:
+`cd day<n>`
 
-Run tests
-`python3 test_day<n>.py`
+Run tests:
+`python test.py`
 
-Solve
-`python3 day<n>.py`
+Solve:
+`python solve.py`
