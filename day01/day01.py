@@ -40,7 +40,9 @@ def solve(input, values):
         min_pair = min(first_pairs, key=lambda pair: pair[0])
         first_digit = min_pair[1]
 
-        last_pairs = [(line.rfind(key), value) for key, value in values.items()]
+        last_pairs = [
+            (line.rfind(key), digit) for key, digit in values.items() if key in line
+        ]
         max_pair = max(last_pairs, key=lambda pair: pair[0])
         last_digit = max_pair[1]
 
