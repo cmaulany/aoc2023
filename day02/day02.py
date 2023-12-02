@@ -32,7 +32,7 @@ def solve(input, score_game):
     scores = []
     for id, reveals in input:
         pairs = sorted(
-            [comb for reveal in reveals for comb in reveal], key=lambda x: x[1]
+            [pair for reveal in reveals for pair in reveal], key=lambda x: x[1]
         )
         bycolor = groupby(pairs, key=lambda x: x[1])
         required_cubes = {color: max(n for n, _ in pairs) for color, pairs in bycolor}
