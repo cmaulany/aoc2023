@@ -35,11 +35,7 @@ def solve(input, score_game):
             [comb for reveal in reveals for comb in reveal], key=lambda x: x[1]
         )
         bycolor = groupby(pairs, key=lambda x: x[1])
-
-        required_cubes = {}
-        for color, pairs in bycolor:
-            n = max(n for n, _ in pairs)
-            required_cubes[color] = n
+        required_cubes = {color: max(n for n, _ in pairs) for color, pairs in bycolor}
 
         scores.append(score_game(id, required_cubes))
 
