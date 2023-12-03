@@ -1,5 +1,5 @@
 import unittest
-from day03 import get_neighbors, parse_input
+from day03 import get_neighbors, parse_input, solve_part1, solve_part2
 
 
 class TestDay01(unittest.TestCase):
@@ -108,19 +108,19 @@ class TestDay01(unittest.TestCase):
             neighbors = get_neighbors(1, 1, 2, input)
             self.assertEqual(neighbors, expected)
 
-    # def test_example_input_part1(self):
-    #     with open("example_input_part1.txt") as stream:
-    #         input = parse_input(stream)
+    def test_example_input_part1(self):
+        with open("example_input.txt") as stream:
+            input = parse_input(stream)
 
-    #     solution = solve_part1(input)
-    #     self.assertEqual(solution, 142)
+        solution = solve_part1(input)
+        self.assertEqual(solution, 4361)
 
-    # def test_example_input_part2(self):
-    #     with open("example_input_part2.txt") as stream:
-    #         input = parse_input(stream)
+    def test_example_input_part2(self):
+        with open("example_input.txt") as stream:
+            input = parse_input(stream)
 
-    #     solution = solve_part2(input)
-    #     self.assertEqual(solution, 281)
+        solution = solve_part2(input)
+        self.assertEqual(solution, 467835)
 
 
 if __name__ == "__main__":
