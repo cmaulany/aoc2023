@@ -23,10 +23,6 @@ def get_neighbors(x, y, length, input):
     ]
 
 
-def has_neighbor_symbol(x, y, length, input):
-    return len(get_neighbors(x, y, length, input)) > 0
-
-
 def get_parts(input):
     parts = []
     for y, line in enumerate(input):
