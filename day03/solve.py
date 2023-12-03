@@ -10,5 +10,3 @@ print(f"Part 1: {solution_part1}")
 
 solution_part2 = solve_part2(input)
 print(f"Part 2: {solution_part2}")
-
-# 549292

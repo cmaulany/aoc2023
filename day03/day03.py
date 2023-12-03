@@ -1,4 +1,5 @@
-from itertools import chain
+from itertools import chain, groupby
+from math import prod
 
 
 def parse_input(stream):
@@ -26,22 +27,40 @@ def has_neighbor_symbol(x, y, length, input):
     return len(get_neighbors(x, y, length, input)) > 0
 
 
-# print(input)
-def solve_part1(input):
-    numbers = []
+def get_parts(input):
+    parts = []
     for y, line in enumerate(input):
         digits = ""
-        for x in range(len(line) + 1):
-            c = line[x] if x < len(line) else "."
+        for x, c in enumerate(line + "."):
             if c.isdigit():
                 digits += c
             elif len(digits) > 0:
                 neighbors = get_neighbors(x - len(digits), y, len(digits), input)
                 if len(neighbors) > 0:
-                    numbers.append(int(digits))
+                    parts.append((int(digits), neighbors))
                 digits = ""
-    return sum(numbers)
+    return parts
+
+
+def solve_part1(input):
+    parts = get_parts(input)
+    return sum(number for number, _ in parts)
 
 
 def solve_part2(input):
-    pass
+    parts = get_parts(input)
+    gear_parts = [
+        (digit, neighbor)
+        for digit, neighbors in parts
+        for neighbor in neighbors
+        if neighbor[2] == "*"
+    ]
+    grouped = groupby(sorted(gear_parts, key=lambda x: x[1]), key=lambda x: x[1])
+
+    ratios = []
+    for _, group_iterator in grouped:
+        group = list(group_iterator)
+        if len(group) == 2:
+            ratio = prod(map(lambda x: x[0], group))
+            ratios.append(ratio)
+    return sum(ratios)
