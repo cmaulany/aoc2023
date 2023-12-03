@@ -2,7 +2,7 @@ import unittest
 from day03 import get_neighbors, parse_input, solve_part1, solve_part2
 
 
-class TestDay01(unittest.TestCase):
+class TestDay03(unittest.TestCase):
     def test_get_neighbors(self):
         with open("example_input.txt") as stream:
             input = parse_input(stream)
