@@ -8,7 +8,9 @@ def parse_input(stream):
 
 def get_neighbors(x, y, length, input):
     left = [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1)]
-    middle = chain(*([(x + i, y - 1), (x + i, y + 1)] for i in range(length)))
+    middle = chain.from_iterable(
+        [(x + i, y - 1), (x + i, y + 1)] for i in range(length)
+    )
     right = [(x + length, y - 1), (x + length, y), (x + length, y + 1)]
 
     positions = chain(left, middle, right)
