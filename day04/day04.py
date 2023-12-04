@@ -33,12 +33,12 @@ def solve_part2(input):
     def cached_scratch(id):
         return scratch(input, id)
 
-    open_card_ids = [card[0] for card in input]
-    scratched_cards = []
-    while open_card_ids:
-        card_id = open_card_ids.pop()
+    unscratched_card_ids = [card[0] for card in input]
+    scratched_card_ids = []
+    while unscratched_card_ids:
+        card_id = unscratched_card_ids.pop()
         wins = cached_scratch(card_id)
         for n in range(wins):
-            open_card_ids.append(card_id + n + 1)
-        scratched_cards.append(card_id)
-    return len(scratched_cards)
+            unscratched_card_ids.append(card_id + n + 1)
+        scratched_card_ids.append(card_id)
+    return len(scratched_card_ids)
