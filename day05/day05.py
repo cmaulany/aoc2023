@@ -1,5 +1,4 @@
 from functools import reduce
-from itertools import chain
 
 
 def parse_input(stream):
@@ -43,17 +42,13 @@ def map_range(range, maps):
             next_n = min(end, src_start)
             next_ranges.append((n, next_n))
             n = next_n
-
         if n > src_start + l:
             continue
-
         next_start = n + dst_start - src_start
         next_end = min(src_start + l, end) + dst_start - src_start
-        next_range = (next_start, next_end)
         if next_end > next_start:
-            next_ranges.append(next_range)
+            next_ranges.append((next_start, next_end))
         n = min(n + l, src_start + l)
-
     if n < end:
         next_ranges.append((n, end))
 
