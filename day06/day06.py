@@ -13,9 +13,12 @@ def solve(input):
     times, distances = input
     win_counts = []
     for time, distance in zip(times, distances):
-        ds = [(time - press_time) * press_time for press_time in range(time)]
-        beaters = [d for d in ds if d > distance]
-        win_counts.append(len(beaters))
+        winning_press_times = [
+            press_time
+            for press_time in range(time)
+            if (time - press_time) * press_time > distance
+        ]
+        win_counts.append(len(winning_press_times))
     return prod(win_counts)
 
 
