@@ -30,15 +30,18 @@ def solve_part1(input):
 
 def solve_part2(input):
     """
-    After analyzing the input we learned that we always find an
-    end node after a multiple of the sequence length.
+    After analyzing the input we learned that we always find a "..Z" 
+    node after an amount of steps that is a multiple of the sequence length.
 
     Afterwards we enter a cycle where we end up at the same (end) node
-    after exactly the same amount of steps.
+    after exactly the same amount of steps. 
 
-    We can find when the cycles align by multiplying them together.
-    Don't think this is guaranteed to find the smallest solution,
-    but works for my puzzle input.
+    When expressing these periods as the amount of full sequence cycles,
+    we find that these periods are all prime.
+
+    Therefore, we can find when the cycles align by multiplying these periods
+    together, followed by multiplying by the sequence length to get the total
+    amount of steps.
     """
     seq, nodes = input
     start_node_names = [name for name in nodes.keys() if name[2] == "A"]
@@ -46,10 +49,10 @@ def solve_part2(input):
     def stop_condition(i, node_name):
         return i % len(seq) == 0 and node_name[2] == "Z"
 
-    steps_to_ends = [
-        steps_to_node(seq, nodes, name, stop_condition) for name in start_node_names
+    periods = [
+        steps_to_node(seq, nodes, name, stop_condition) / len(seq)
+        for name in start_node_names
     ]
-    periods = [int(steps / len(seq)) for steps in steps_to_ends]
 
     steps = prod(periods) * len(seq)
     return steps
