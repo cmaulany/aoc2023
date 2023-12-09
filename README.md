@@ -1,8 +1,10 @@
-Move to day folder:
+# Move to day folder:
 `cd day<n>`
 
-Run tests:
+# Run tests:
 `python test.py`
 
-Solve:
-`python solve.py`
+# Solve:
+Place input in file input.txt
+
+Run `python solve.py`
