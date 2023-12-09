@@ -15,7 +15,7 @@ def pairwise(l):
 def get_history_steps(history):
     steps = [history]
     while any(n != 0 for n in steps[-1]):
-        step = [pair[1] - pair[0] for pair in pairwise(steps[-1])]
+        step = [b - a for a, b in pairwise(steps[-1])]
         steps.append(step)
 
     return list(reversed(steps))
