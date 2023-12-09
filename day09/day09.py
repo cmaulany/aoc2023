@@ -30,12 +30,12 @@ def extrapolate_left(steps):
 
 
 def solve_part1(input):
-    steps = [get_history_steps(history) for history in input]
-    right_values = map(extrapolate_right, steps)
+    histories_steps = map(get_history_steps, input)
+    right_values = map(extrapolate_right, histories_steps)
     return sum(right_values)
 
 
 def solve_part2(input):
-    steps = [get_history_steps(history) for history in input]
-    left_values = map(extrapolate_left, steps)
+    histories_steps = map(get_history_steps, input)
+    left_values = map(extrapolate_left, histories_steps)
     return sum(left_values)
