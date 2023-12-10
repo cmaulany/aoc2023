@@ -29,6 +29,13 @@ class TestDay10(unittest.TestCase):
             input = parse_input(stream)
 
         solution = solve_part2(input)
+        self.assertEqual(solution, 8)
+
+    def test_example_input_part2_3(self):
+        with open("example_input_part2_3.txt") as stream:
+            input = parse_input(stream)
+
+        solution = solve_part2(input)
         self.assertEqual(solution, 10)
 
 

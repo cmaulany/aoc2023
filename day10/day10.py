@@ -50,8 +50,8 @@ def get_neighbors(map, position):
         "|": [NORTH, SOUTH],
         "-": [EAST, WEST],
         "L": [NORTH, EAST],
-        "J": [WEST, NORTH],
-        "7": [WEST, SOUTH],
+        "J": [NORTH, WEST],
+        "7": [SOUTH, WEST],
         "F": [EAST, SOUTH],
     }[type]
 
