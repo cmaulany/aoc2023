@@ -8,10 +8,12 @@ def get_start(map):
     position = next((line.index("S"), y) for y, line in enumerate(map) if "S" in line)
     x, y = position
 
-    n = map[y - 1][x] in "|7F"
-    e = map[y][x + 1] in "-J7"
-    s = map[y + 1][x] in "|LJ"
-    w = map[y][x - 1] in "-LF"
+    width = len(map[0]) * 2
+    height = len(map) * 2
+    n = y > 0 and map[y - 1][x] in "|7F"
+    e = x < width - 1 and map[y][x + 1] in "-J7"
+    s = y < height - 1 and map[y + 1][x] in "|LJ"
+    w = x > 0 and map[y][x - 1] in "-LF"
     if n and s:
         type = "|"
     if e and w:
