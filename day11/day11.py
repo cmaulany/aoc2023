@@ -1,4 +1,4 @@
-from itertools import permutations
+from itertools import combinations
 
 
 def parse_input(f):
@@ -36,9 +36,9 @@ def solve(input, scale):
     expansion_zones = get_expansion_zones(input)
     positions = get_positions(input)
     distances = [
-        dis(a, b, expansion_zones, scale) for a, b in permutations(positions, 2)
+        dis(a, b, expansion_zones, scale) for a, b in combinations(positions, 2)
     ]
-    return sum(distances) // 2
+    return sum(distances)
 
 
 def solve_part1(input):
