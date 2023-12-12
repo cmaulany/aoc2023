@@ -1,55 +1,40 @@
-import re
-from itertools import combinations
+from functools import cache
 
-"""
-for each track combination track:
-    combination
-    touch-left
-    touch-right
 
-Then we should be able to combine these combinations into new sequences
-    
-"""
-
-with open("input.txt") as f:
+def parse_input(f):
     rows = []
     for line in f.readlines():
         springs, groups_input = line.strip().split(" ")
-        groups = list(map(int, groups_input.split(",")))
+        groups = tuple(map(int, groups_input.split(",")))
         rows.append((springs, groups))
+    return rows
 
 
-def get_combinations(row):
-    springs, groups = row
-    spring_count = sum(groups)
-    known_count = springs.count("#")
-    unknowns = [i for i, g in enumerate(springs) if g == "?"]
-    # print(known_count, unknowns)
-    # print(list(combinations(unknowns, spring_count - known_count)))
-    combs = [
-        "".join(("#" if i in comb or c == "#" else ".") for i, c in enumerate(springs))
-        for comb in combinations(unknowns, spring_count - known_count)
-    ]
-    # print(combs)
-    combs_groups = [
-        list(map(len, re.split("\.+", comb[comb.find("#") : comb.rfind("#") + 1])))
-        for comb in combs
-    ]
-    valid_combs = [comb for comb in combs_groups if comb == groups]
-    # print("A", valid_combs)
-    res = len(valid_combs)
-    print(res)
-    return res
-    # make string
-    # see if it matches by splitting
+@cache
+def count_solutions(springs, groups):
+    if len(groups) == 0:
+        return "#" not in springs
 
-rows = [
-    (springs + "?" + springs + "?" + springs + "?" + springs + "?" + springs, groups + groups + groups + groups + groups)
-    for springs, groups in rows
-]
-# print(rows)
+    first = groups[0]
+    if first > len(springs):
+        return 0
 
-# print(get_combinations(rows[1]))
+    count = 0
+    if all(springs[i] in "#?" for i in range(first)) and (
+        first == len(springs) or springs[first] != "#"
+    ):
+        count += count_solutions(springs[first + 1 :], groups[1:])
 
-valids = map(get_combinations, rows)
-print(sum(valids))
+    if springs[0] == "." or springs[0] == "?":
+        count += count_solutions(springs[1:], groups)
+
+    return count
+
+
+def solve_part1(input):
+    return sum(count_solutions(*row) for row in input)
+
+
+def solve_part2(input):
+    rows = [(springs + ("?" + springs) * 4, groups * 5) for springs, groups in input]
+    return sum(count_solutions(*row) for row in rows)
