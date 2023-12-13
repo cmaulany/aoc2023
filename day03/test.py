@@ -4,8 +4,8 @@ from day03 import get_neighbors, parse_input, solve_part1, solve_part2
 
 class TestDay03(unittest.TestCase):
     def test_get_neighbors(self):
-        with open("example_input.txt") as stream:
-            input = parse_input(stream)
+        with open("example_input.txt") as f:
+            input = parse_input(f)
         neighbors = get_neighbors(0, 0, 3, input)
         self.assertEqual(len(neighbors), 1)
         self.assertEqual(neighbors[0], (3, 1, "*"))
@@ -109,15 +109,15 @@ class TestDay03(unittest.TestCase):
             self.assertEqual(neighbors, expected)
 
     def test_example_input_part1(self):
-        with open("example_input.txt") as stream:
-            input = parse_input(stream)
+        with open("example_input.txt") as f:
+            input = parse_input(f)
 
         solution = solve_part1(input)
         self.assertEqual(solution, 4361)
 
     def test_example_input_part2(self):
-        with open("example_input.txt") as stream:
-            input = parse_input(stream)
+        with open("example_input.txt") as f:
+            input = parse_input(f)
 
         solution = solve_part2(input)
         self.assertEqual(solution, 467835)

@@ -2,9 +2,9 @@ import re
 from functools import cache
 
 
-def parse_input(stream):
+def parse_input(f):
     input = []
-    for line in stream.readlines():
+    for line in f.readlines():
         card, rest = line.split(":")
         card_id = int(re.split(r" +", card)[1])
         winners_input, mine_input = rest.split("|")

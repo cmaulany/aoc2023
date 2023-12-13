@@ -27,8 +27,8 @@ valid_digits_part1 = number_digits
 valid_digits_part2 = {**number_digits, **word_digits}
 
 
-def parse_input(stream):
-    return stream.readlines()
+def parse_input(f):
+    return f.readlines()
 
 
 def find_calibration_value(line, valid_digits):

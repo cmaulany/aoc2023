@@ -2,8 +2,8 @@ from itertools import chain, groupby
 from math import prod
 
 
-def parse_input(stream):
-    return [line.strip() for line in stream.readlines()]
+def parse_input(f):
+    return [line.strip() for line in f.readlines()]
 
 
 def get_neighbors(x, y, length, input):

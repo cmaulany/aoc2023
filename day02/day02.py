@@ -2,8 +2,8 @@ from itertools import groupby
 from math import prod
 
 
-def parse_input(stream):
-    lines = stream.readlines()
+def parse_input(f):
+    lines = f.readlines()
     games = []
     for line in lines:
         id_input, reveals_input = line.split(":")

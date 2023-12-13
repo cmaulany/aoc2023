@@ -1,8 +1,8 @@
 from functools import reduce
 
 
-def parse_input(stream):
-    seeds_input, *maps_input = stream.read().split("\n\n")
+def parse_input(f):
+    seeds_input, *maps_input = f.read().split("\n\n")
     seeds = list(map(int, seeds_input.split(":")[1].strip().split(" ")))
 
     cats = []
