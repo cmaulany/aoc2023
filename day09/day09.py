@@ -1,4 +1,3 @@
-from itertools import tee
 from functools import reduce
 
 
@@ -6,23 +5,21 @@ def parse_input(f):
     return [list(map(int, line.split(" "))) for line in f.readlines()]
 
 
-def pairwise(l):
-    a, b = tee(l)
-    next(b, None)
-    return zip(a, b)
+def pairwise(list):
+    return ((list[i], list[i + 1]) for i in range(len(list) - 1))
 
 
 def get_history_steps(history):
     steps = [history]
-    while any(n != 0 for n in steps[-1]):
-        step = [b - a for a, b in pairwise(steps[-1])]
-        steps.append(step)
+    while any(n != 0 for n in steps[0]):
+        step = [b - a for a, b in pairwise(steps[0])]
+        steps.insert(0, step)
 
-    return list(reversed(steps))
+    return steps
 
 
 def extrapolate_right(steps):
-    return reduce(lambda n, steps: steps[-1] + n, steps, 0)
+    return reduce(lambda n, step: step[-1] + n, steps, 0)
 
 
 def extrapolate_left(steps):
