@@ -40,7 +40,7 @@ def parse_input(f):
     return map, start_position
 
 
-def get_neighbors(map, position):
+def get_pipe_neighbors(map, position):
     px, py = position
     width = len(map[0])
     height = len(map)
@@ -74,7 +74,7 @@ def find_path(map, start):
             break
 
         visited.add(current)
-        for neighbor in get_neighbors(map, current):
+        for neighbor in get_pipe_neighbors(map, current):
             if neighbor != "." and (neighbor == start or neighbor not in visited):
                 open.append(neighbor)
                 prevs[neighbor] = current
@@ -87,75 +87,66 @@ def find_path(map, start):
     return path
 
 
-def get_sub_neighbors(map, start_position):
-    """
-    We divide each tile into for subtiles:
-    A | B
-    - + -
-    C | D
-    """
-    x, y = start_position
-    type = map[int(y / 2)][int(x / 2)]
+expansions = {
+    ".": [
+        "...",
+        "...",
+        "...",
+    ],
+    "|": [
+        ".#.",
+        ".#.",
+        ".#.",
+    ],
+    "-": [
+        "...",
+        "###",
+        "...",
+    ],
+    "L": [
+        ".#.",
+        ".##",
+        "...",
+    ],
+    "J": [
+        ".#.",
+        "##.",
+        "...",
+    ],
+    "7": [
+        "...",
+        "##.",
+        ".#.",
+    ],
+    "F": [
+        "...",
+        ".##",
+        ".#.",
+    ],
+}
 
-    sub_position = (x % 2, y % 2)
-    sub_type = {
-        (0, 0): "A",
-        (1, 0): "B",
-        (0, 1): "C",
-        (1, 1): "D",
-    }[sub_position]
 
-    deltas = {
-        ".": {
-            "A": [NORTH, EAST, SOUTH, WEST],
-            "B": [NORTH, EAST, SOUTH, WEST],
-            "C": [NORTH, EAST, SOUTH, WEST],
-            "D": [NORTH, EAST, SOUTH, WEST],
-        },
-        "|": {
-            "A": [NORTH, SOUTH, WEST],
-            "B": [NORTH, EAST, SOUTH],
-            "C": [NORTH, SOUTH, WEST],
-            "D": [NORTH, EAST, SOUTH],
-        },
-        "-": {
-            "A": [NORTH, EAST, WEST],
-            "B": [NORTH, EAST, WEST],
-            "C": [EAST, SOUTH, WEST],
-            "D": [EAST, SOUTH, WEST],
-        },
-        "L": {
-            "A": [NORTH, SOUTH, WEST],
-            "B": [NORTH, EAST],
-            "C": [NORTH, EAST, SOUTH, WEST],
-            "D": [EAST, SOUTH, WEST],
-        },
-        "J": {
-            "A": [NORTH, WEST],
-            "B": [NORTH, EAST, SOUTH],
-            "C": [EAST, SOUTH, WEST],
-            "D": [NORTH, EAST, SOUTH, WEST],
-        },
-        "7": {
-            "A": [NORTH, EAST, WEST],
-            "B": [NORTH, EAST, SOUTH, WEST],
-            "C": [SOUTH, WEST],
-            "D": [NORTH, EAST, SOUTH],
-        },
-        "F": {
-            "A": [NORTH, EAST, SOUTH, WEST],
-            "B": [NORTH, EAST, WEST],
-            "C": [NORTH, SOUTH, WEST],
-            "D": [SOUTH, EAST],
-        },
-    }[type][sub_type]
+def expand(map):
+    new_map = [""] * len(map) * 3
+    for y, row in enumerate(map):
+        for c in row:
+            tile = expansions[c]
+            for dy, cs in enumerate(tile):
+                new_map[y * 3 + dy] += cs
+    return new_map
 
-    neighbors = [(x + dx, y + dy) for dx, dy in deltas]
 
-    width = len(map[0]) * 2
-    height = len(map) * 2
+def get_neighbors(map, position):
+    x, y = position
+
+    neighbors = [(x + dx, y + dy) for dx, dy in [NORTH, EAST, SOUTH, WEST]]
+
+    width = len(map[0])
+    height = len(map)
     return [
-        (x, y) for x, y in neighbors if x >= 0 and x < width and y >= 0 and y < height
+        (x, y)
+        for x, y in neighbors
+        if x >= 0 and x < width and y >= 0 and y < height and map[y][x] != "#"
     ]
 
 
@@ -166,21 +157,10 @@ def flood_fill(map, position=(0, 0)):
         current = open.pop()
 
         visited.add(current)
-        for neighbor in get_sub_neighbors(map, current):
+        for neighbor in get_neighbors(map, current):
             if neighbor not in visited:
                 open.append(neighbor)
-
-    width = range(len(map[0]))
-    height = range(len(map))
-    return {
-        (x, y)
-        for x in width
-        for y in height
-        if (x * 2, y * 2) in visited
-        and (x * 2 + 1, y * 2) in visited
-        and (x * 2, y * 2 + 1) in visited
-        and (x * 2 + 1, y * 2 + 1) in visited
-    }
+    return visited
 
 
 def solve_part1(input):
@@ -191,20 +171,22 @@ def solve_part1(input):
 
 def solve_part2(input):
     map, start_position = input
+    width = len(map[0])
+    height = len(map)
 
     loop = set(find_path(map, start_position))
     loop_map = [
         "".join(type if (x, y) in loop else "." for x, type in enumerate(line))
         for y, line in enumerate(map)
     ]
-    outer_positions = flood_fill(loop_map)
-
-    width = range(len(map[0]))
-    height = range(len(map))
-    enclosed_positions = [
+    expanded_outer_map = flood_fill(expand(loop_map))
+    enclosed_positions = set(
         (x, y)
-        for x in width
-        for y in height
-        if (x, y) not in loop and (x, y) not in outer_positions
-    ]
+        for x in range(width)
+        for y in range(height)
+        if (x * 3, y * 3) not in expanded_outer_map
+        and (x * 3 + 2, y * 3) not in expanded_outer_map
+        and (x * 3, y * 3 + 2) not in expanded_outer_map
+        and (x * 3 + 2, y * 3 + 2) not in expanded_outer_map
+    )
     return len(enclosed_positions)
