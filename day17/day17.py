@@ -1,3 +1,6 @@
+from heapq import heappush, heappop
+
+
 def parse_input(f):
     return [list(map(int, line.strip())) for line in f.readlines()]
 
@@ -28,41 +31,33 @@ def get_neighbors(map, node, crucible_behavior):
 
 
 def find_path(map, crucible_behavior):
-    start = ((0, 0), (1, 0), 0)
-    open = [start]
+    starts = [((0, 0), (1, 0), 0), ((0, 0), (0, 1), 0)]
     prev = {}
-    val = {start: 0}
+    open = [(0, start) for start in starts]
+    scores = {start: 0 for start in starts}
     while open:
-        current = open.pop(0)
+        _, current = heappop(open)
         for neighbor in get_neighbors(map, current, crucible_behavior):
-            new_val = val[current] + map[neighbor[0][1]][neighbor[0][0]]
-            if neighbor not in val or new_val < val[neighbor]:
+            score = scores[current] + map[neighbor[0][1]][neighbor[0][0]]
+            if neighbor not in scores or score < scores[neighbor]:
                 prev[neighbor] = current
-                val[neighbor] = new_val
-                open.append(neighbor)
+                scores[neighbor] = score
+                heappush(open, (score, neighbor))
 
     width = len(map[0])
     height = len(map)
-    min_move = crucible_behavior[0]
+    min_move, _ = crucible_behavior
     current = min(
         (
             (pos, dir, l)
-            for pos, dir, l in val.keys()
+            for pos, dir, l in scores.keys()
             if pos == (width - 1, height - 1) and l >= min_move
         ),
-        key=lambda node: val[node],
-    )
-    print(
-        "MATCHES",
-        [
-            (pos, dir, l)
-            for pos, dir, l in val.keys()
-            if pos == (width - 1, height - 1) and l >= min_move
-        ],
+        key=lambda node: scores[node],
     )
 
     path = []
-    while current != start:
+    while current not in starts:
         path.append(current)
         current = prev[current]
 
@@ -77,16 +72,3 @@ def solve_part1(input):
 def solve_part2(input):
     path = find_path(input, (4, 10))
     return sum(input[y][x] for x, y in path)
-
-
-# print(get_neighbors(input, ((0, 0), (1, 0), 0)))
-# path = find_path(input)
-# print("PATH", path)
-# values = [input[y][x] for x, y in path]
-# print(sum(values))
-
-# for y in range(len(input)):
-#     print("".join("#" if (x, y) in path else str(c) for x, c in enumerate(input[y])))
-
-# TOo high 810
-# too low
