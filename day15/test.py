@@ -10,7 +10,7 @@ class TestDay15(unittest.TestCase):
         solution = solve_part1(input)
         self.assertEqual(solution, 1320)
 
-    def test_example_input_part1(self):
+    def test_example_input_part2(self):
         with open("example_input.txt") as f:
             input = parse_input(f)
 
