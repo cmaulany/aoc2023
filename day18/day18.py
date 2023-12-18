@@ -1,95 +1,74 @@
-from functools import reduce
-
-with open("example_input.txt") as f:
+def parse_input(f):
     input = []
     for line in f.readlines():
         dir, l, c = line.strip().split(" ")
         input.append((dir, int(l), c[1:-1]))
+    return input
 
 
-def dig(grid, position, command):
-    dir, l, c = command
-    d = {
-        "U": (0, -1),
-        "R": (1, 0),
-        "D": (0, 1),
-        "L": (-1, 0),
-    }[dir]
-    for _ in range(l):
-        position = (position[0] + d[0], position[1] + d[1])
-        grid[position] = c
-    return grid, position
+def pairwise(list):
+    return ((list[i], list[i + 1]) for i in range(len(list) - 1))
 
 
-def do_all(grid, position, commands):
-    return reduce(
-        lambda acc, command: dig(acc[0], acc[1], command), commands, (grid, position)
-    )
+def get_edges(commands, start=(0, 0)):
+    edges = []
+    end = start
+    for command in commands:
+        dir, l = command
+        d = {
+            "U": (0, -1),
+            "R": (1, 0),
+            "D": (0, 1),
+            "L": (-1, 0),
+        }[dir]
+        start = end
+        end = (start[0] + d[0] * l, start[1] + d[1] * l)
+        edges.append((start, end))
+    return edges
 
 
-new_input = []
-for _, _, c in input:
-    print(c)
-    i = int(c[1:6], 16)
-    d = {"0": "R", "1": "D", "2": "L", "3": "U"}[c[6]]
-    new_input.append((d, i, ""))
-grid, position = do_all({}, (0, 0), new_input)
+def get_surface(edges):
+    h_edges = [(start, end) for start, end in edges if start[1] == end[1]]
+    v_edges = [(start, end) for start, end in edges if start[0] == end[0]]
+    ys = list(sorted(set(start[1] for start, _ in h_edges)))
+
+    # calculate surface area
+    a = 0
+    for y0, y1 in pairwise(ys):
+        xs = (
+            sx
+            for (sx, sy), (_, ey) in v_edges
+            if y0 >= min(sy, ey) and y0 < max(sy, ey)
+        )
+        xs = list(sorted(set(xs)))
+        for x in range(0, len(xs), 2):
+            x0 = xs[x]
+            x1 = xs[x + 1]
+            a += (y1 - y0) * (x1 - x0)
+
+    # expand by 0.5 tile
+    a += 1
+    a += sum(abs(ex - sx) / 2 for (sx, _), (ex, _) in h_edges)
+    a += sum(abs(ey - sy) / 2 for (_, sy), (_, ey) in v_edges)
+    return int(a)
 
 
-def get_inner(grid):
-    xs = list(map(lambda x: x[0], grid.keys()))
-    ys = list(map(lambda x: x[1], grid.keys()))
-    min_x = min(xs) - 1
-    min_y = min(ys) - 1
-    max_x = max(xs) + 2
-    max_y = max(ys) + 2
-
-    filled = set()
-    open = [(min_x, min_y)]
-    while open:
-        current = open.pop()
-        neighbors = [
-            (current[0] + d[0], current[1] + d[1])
-            for d in [(0, -1), (1, 0), (0, 1), (-1, 0)]
-        ]
-        valid_neighbors = [
-            neighbor
-            for neighbor in neighbors
-            if neighbor not in grid
-            and neighbor not in filled
-            and neighbor[0] >= min_x
-            and neighbor[0] < max_x
-            and neighbor[1] >= min_y
-            and neighbor[1] < max_y
-        ]
-        for neighbor in valid_neighbors:
-            filled.add(neighbor)
-            open.append(neighbor)
-
-    return set(
-        [
-            (x, y)
-            for x in range(min_x, max_x)
-            for y in range(min_y, max_y)
-            if (x, y) not in filled and (x, y) not in grid
-        ]
-    )
+def color_to_commands(colors):
+    commands = []
+    for color in colors:
+        dir = {"0": "R", "1": "D", "2": "L", "3": "U"}[color[6]]
+        l = int(color[1:6], 16)
+        commands.append((dir, l))
+    return commands
 
 
-def draw(grid):
-    xs = list(map(lambda x: x[0], grid))
-    ys = list(map(lambda x: x[1], grid))
-    min_x = min(xs)
-    min_y = min(ys)
-    max_x = max(xs)
-    max_y = max(ys)
-    for y in range(min_y, max_y + 1):
-        print("".join("#" if (x, y) in grid else "." for x in range(min_x, max_x + 1)))
+def solve_part1(input):
+    commands = [row[:2] for row in input]
+    edges = get_edges(commands)
+    return get_surface(edges)
 
 
-print(len(grid))
-
-inner = get_inner(grid)
-print(len(inner))
-
-print(len(inner) + len(grid))
+def solve_part2(input):
+    commands = color_to_commands(row[2] for row in input)
+    edges = get_edges(commands)
+    return get_surface(edges)
