@@ -1,8 +1,11 @@
 import unittest
-from day15 import parse_input, solve_part1, solve_part2
+from day15 import hash, parse_input, solve_part1, solve_part2
 
 
 class TestDay15(unittest.TestCase):
+    def test_hash(self):
+        self.assertEqual(hash("HASH"), 52)
+
     def test_example_input_part1(self):
         with open("example_input.txt") as f:
             input = parse_input(f)
