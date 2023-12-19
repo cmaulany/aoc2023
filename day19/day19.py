@@ -88,10 +88,6 @@ def run_ranges(workflows, name, step_i, ranges):
     return valid_count
 
 
-with open("input.txt") as f:
-    input = parse_input(f)
-
-
 def solve_part1(input):
     workflows, parts = input
     res = [
