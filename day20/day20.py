@@ -1,3 +1,6 @@
+from math import lcm
+
+
 def parse_input(f):
     modules = {}
     for line in f.readlines():
@@ -12,12 +15,6 @@ def parse_input(f):
     return modules
 
 
-def invert(val):
-    if val == "high":
-        return "low"
-    return "high"
-
-
 def init_memory(modules):
     memory = {}
     for name, module in modules.items():
@@ -30,8 +27,8 @@ def init_memory(modules):
     for name, module in modules.items():
         type, conns = module
         for conn in conns:
-            if conn != "output" and conn in modules and modules[conn][0] == "&":
-                memory[conn][name] = "off"
+            if conn in modules and modules[conn][0] == "&":
+                memory[conn][name] = "low"
     return memory
 
 
@@ -73,24 +70,40 @@ def format_history(history):
 
 
 def solve_part1(input):
-    total_history = []
+    history = []
     memory = None
     for _ in range(1000):
-        memory, history = simulate_pulses(input, memory)
-        total_history += history
-    lows = [val for _, _, val in total_history if val == "low"]
-    highs = [val for _, _, val in total_history if val == "high"]
-    print(len(lows), len(highs))
-
+        memory, sub_history = simulate_pulses(input, memory)
+        history += sub_history
+    lows = [val for _, _, val in history if val == "low"]
+    highs = [val for _, _, val in history if val == "high"]
     return len(lows) * len(highs)
 
 
-def solve_part2(input):
-    memory = None
+def find_low_pulse(modules, name):
     i = 0
+    memory = init_memory(modules)
     while True:
-        memory, history = simulate_pulses(input, memory)
-        if any(to == "rx" and val == "low" for _, to, val in history):
-            break
+        memory, history = simulate_pulses(modules, memory)
         i += 1
-    return i
+
+        pulsed = any(to == name and val == "low" for _, to, val in history)
+        if pulsed:
+            return i
+
+
+def solve_part2(input):
+    pre_rx = next(
+        name
+        for name, (type, conns) in input.items()
+        for conn in conns
+        if type == "&" and conn == "rx"
+    )
+    pre_rx_sources = [
+        name
+        for name, (type, conns) in input.items()
+        for conn in conns
+        if type == "&" and conn == pre_rx
+    ]
+    cycles = [find_low_pulse(input, name) for name in pre_rx_sources]
+    return lcm(*cycles)
