@@ -1,4 +1,5 @@
-from itertools import combinations, permutations
+from itertools import combinations
+import sympy as sym
 
 
 def parse_input(f):
@@ -36,13 +37,6 @@ def find_intersection(a, b):
     return pos
 
 
-def pos_at_t(a, t):
-    pa, va = a
-    pax, pay, paz = pa
-    vax, vay, vaz = va
-    return (pax + vax * t, pay + vay * t, paz + vaz * t)
-
-
 def solve_part1(input, min_bound, max_bound):
     c = 0
     for a, b in combinations(input, 2):
@@ -60,43 +54,33 @@ def solve_part1(input, min_bound, max_bound):
     return c
 
 
-def destroys_all_stones(stones, throw):
-    for stone in stones:
-        t = find_intersection_time(stone, throw)
-        if t == None or t <= 0 or pos_at_t(stone, t) != pos_at_t(throw, t):
-            return False
-    return True
-
-
-def create_vector(a, b, m, n):
-    pos_at_1 = pos_at_t(a, m)
-    pos_at_2 = pos_at_t(b, n)
-    dx = (pos_at_2[0] - pos_at_1[0]) / (n - m)
-    dy = (pos_at_2[1] - pos_at_1[1]) / (n - m)
-    dz = (pos_at_2[2] - pos_at_1[2]) / (n - m)
-
-    sx = pos_at_1[0] - dx * m
-    sy = pos_at_1[1] - dy * m
-    sz = pos_at_1[2] - dz * m
-    return (sx, sy, sz), (dx, dy, dz)
-
-
 def solve_part2(input):
-    for i in range(1, 1000):
-        print(i)
-        # if i % 100 == 0 and j == i + 1:
-        #     print(i, j)
-        for j in range(i + 1, i + 10):
-            for a, b in permutations(input, 2):
-                throw = create_vector(a, b, i, j)
-                if destroys_all_stones(input, throw):
-                    return throw
-    return None
+    a, b, c, *_ = input
+    (pax, pay, paz), (vax, vay, vaz) = a
+    (pbx, pby, pbz), (vbx, vby, vbz) = b
+    (pcx, pcy, pcz), (vcx, vcy, vcz) = c
 
+    pmx = sym.Symbol("pmx")
+    pmy = sym.Symbol("pmy")
+    pmz = sym.Symbol("pmz")
+    vmx = sym.Symbol("vmx")
+    vmy = sym.Symbol("vmy")
+    vmz = sym.Symbol("vmz")
+    t = sym.Symbol("t")
+    u = sym.Symbol("u")
+    v = sym.Symbol("v")
 
-# with open("example_input.txt") as f:
-#     input = parse_input(f)
-
-# r = create_vector(((20, 19, 15), (1, -5, -3)), ((18, 19, 22), (-1, -1, -2)), 1, 3)
-# print("VEC", r)
-# print("VECRES", try_throw(input, r))
+    solution = sym.solve(
+        (
+            pmx + vmx * t - pax - vax * t,
+            pmy + vmy * t - pay - vay * t,
+            pmz + vmz * t - paz - vaz * t,
+            pmx + vmx * u - pbx - vbx * u,
+            pmy + vmy * u - pby - vby * u,
+            pmz + vmz * u - pbz - vbz * u,
+            pmx + vmx * v - pcx - vcx * v,
+            pmy + vmy * v - pcy - vcy * v,
+            pmz + vmz * v - pcz - vcz * v,
+        )
+    )[0]
+    return solution[pmx] + solution[pmy] + solution[pmz]
