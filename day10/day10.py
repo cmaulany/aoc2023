@@ -57,11 +57,7 @@ def get_pipe_neighbors(map, position):
 
     neighbors = [(px + dx, py + dy) for dx, dy in deltas]
 
-    return [
-        (px, py)
-        for px, py in neighbors
-        if px >= 0 and px < width and py >= 0 and py < height
-    ]
+    return [(px, py) for px, py in neighbors if 0 <= px < width and 0 <= py < height]
 
 
 def find_path(map, start):
@@ -146,7 +142,7 @@ def get_neighbors(map, position):
     return [
         (x, y)
         for x, y in neighbors
-        if x >= 0 and x < width and y >= 0 and y < height and map[y][x] != "#"
+        if 0 <= x < width and 0 <= y < height and map[y][x] != "#"
     ]
 
 

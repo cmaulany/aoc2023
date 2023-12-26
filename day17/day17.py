@@ -26,7 +26,7 @@ def get_neighbors(map, node, crucible_behavior):
     return [
         (pos, dir, l)
         for pos, dir, l in neighbors
-        if pos[0] >= 0 and pos[1] >= 0 and pos[0] < width and pos[1] < height
+        if 0 <= pos[0] < width and 0 <= pos[1] < height
     ]
 
 

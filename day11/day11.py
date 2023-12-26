@@ -25,8 +25,8 @@ def dis(a, b, expansion_zones, scale=1):
     ax, ay = a
     bx, by = b
     xzones, yzones = expansion_zones
-    xzone_count = len([x for x in xzones if x >= min(ax, bx) and x < max(ax, bx)])
-    yzone_count = len([y for y in yzones if y >= min(ay, by) and y < max(ay, by)])
+    xzone_count = len([x for x in xzones if min(ax, bx) <= x < max(ax, bx)])
+    yzone_count = len([y for y in yzones if min(ay, by) <= y < max(ay, by)])
     return abs(ax - bx) + abs(ay - by) + (xzone_count + yzone_count) * (scale - 1)
 
 

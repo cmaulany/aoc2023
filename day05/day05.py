@@ -17,7 +17,7 @@ def parse_input(f):
 
 def map_one(n, maps):
     for dst_start, src_start, l in maps:
-        if n >= src_start and n < src_start + l:
+        if src_start <= n < src_start + l:
             return n + dst_start - src_start
     return n
 

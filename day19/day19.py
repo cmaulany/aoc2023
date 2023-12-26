@@ -90,15 +90,15 @@ def run_ranges(workflows, name, step_i, ranges):
 
 def solve_part1(input):
     workflows, parts = input
-    res = [
+    ratings = [
         sum(part.values()) if run_workflow(workflows, "in", part) == "A" else 0
         for part in parts
     ]
-    return sum(res)
+    return sum(ratings)
 
 
 def solve_part2(input):
-    workflows, parts = input
+    workflows, _ = input
     return run_ranges(
         workflows,
         "in",

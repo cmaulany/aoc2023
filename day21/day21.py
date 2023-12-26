@@ -17,7 +17,7 @@ def get_neighbors(grid, position, wrap=False):
     return [
         (nx, ny)
         for nx, ny in neighbors
-        if wrap or (nx >= 0 and nx < width and ny >= 0 and ny < height)
+        if wrap or (0 <= nx < width and 0 <= ny < height)
         if grid[ny % height][nx % width] != "#"
     ]
 

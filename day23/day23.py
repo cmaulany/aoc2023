@@ -28,7 +28,7 @@ def get_neighbors(grid, pos):
     return [
         (nx, ny)
         for nx, ny in [(x + dx, y + dy) for dx, dy in deltas]
-        if nx >= 0 and nx < width and ny >= 0 and ny < height
+        if 0 <= nx < width and 0 <= ny < height
         if grid[ny][nx] != "#"
     ]
 
