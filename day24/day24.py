@@ -12,43 +12,34 @@ def parse_input(f):
     ]
 
 
-def find_intersection_time(a, b):
-    pa, va = a
-    pax, pay, _ = pa
-    vax, vay, _ = va
-    pb, vb = b
-    pbx, pby, _ = pb
-    vbx, vby, _ = vb
+def find_intersection(a, b):
+    (pax, pay, _), (vax, vay, _) = a
+    (pbx, pby, _), (vbx, vby, _) = b
 
     div = (vay * vbx) - (vax * vby)
     if div == 0:
         return None
-    return (vax * (pby - pay) - vay * (pbx - pax)) / div
 
-
-def find_intersection(a, b):
-    pb, vb = b
-    pbx, pby, _ = pb
-    vbx, vby, _ = vb
-    u = find_intersection_time(a, b)
-    if u == None or u <= 0:
-        return None
-    pos = (pbx + vbx * u, pby + vby * u)
-    return pos
+    t = (vax * (pby - pay) - vay * (pbx - pax)) / div
+    return (pbx + vbx * t, pby + vby * t)
 
 
 def solve_part1(input, min_bound, max_bound):
     c = 0
     for a, b in combinations(input, 2):
-        inter_a = find_intersection(b, a)
-        inter_b = find_intersection(a, b)
+        intersection = find_intersection(b, a)
+        if intersection == None:
+            continue
+        x, y = intersection
+        (ax, ay, _), (vax, vay, _) = a
+        (bx, by, _), (vbx, vby, _) = b
         if (
-            inter_a != None
-            and inter_b != None
-            and inter_a[0] >= min_bound
-            and inter_a[0] <= max_bound
-            and inter_b[1] >= min_bound
-            and inter_b[1] <= max_bound
+            min_bound <= x <= max_bound
+            and min_bound <= y <= max_bound
+            and (x - ax) / vax > 0
+            and (y - ay) / vay > 0
+            and (x - bx) / vbx > 0
+            and (y - by) / vby > 0
         ):
             c += 1
     return c
@@ -56,31 +47,25 @@ def solve_part1(input, min_bound, max_bound):
 
 def solve_part2(input):
     a, b, c, *_ = input
-    (pax, pay, paz), (vax, vay, vaz) = a
-    (pbx, pby, pbz), (vbx, vby, vbz) = b
-    (pcx, pcy, pcz), (vcx, vcy, vcz) = c
+    (ax, ay, az), (vax, vay, vaz) = a
+    (bx, by, bz), (vbx, vby, vbz) = b
+    (cx, cy, cz), (vcx, vcy, vcz) = c
 
-    pmx = sym.Symbol("pmx")
-    pmy = sym.Symbol("pmy")
-    pmz = sym.Symbol("pmz")
-    vmx = sym.Symbol("vmx")
-    vmy = sym.Symbol("vmy")
-    vmz = sym.Symbol("vmz")
-    t = sym.Symbol("t")
-    u = sym.Symbol("u")
-    v = sym.Symbol("v")
+    rx, ry, rz = sym.symbols("pmx, pmy, pmz")
+    vrx, vry, vrz = sym.symbols("vmx, vmy, vmz")
+    t, u, v = sym.symbols("t, u, v")
 
     solution = sym.solve(
         (
-            pmx + vmx * t - pax - vax * t,
-            pmy + vmy * t - pay - vay * t,
-            pmz + vmz * t - paz - vaz * t,
-            pmx + vmx * u - pbx - vbx * u,
-            pmy + vmy * u - pby - vby * u,
-            pmz + vmz * u - pbz - vbz * u,
-            pmx + vmx * v - pcx - vcx * v,
-            pmy + vmy * v - pcy - vcy * v,
-            pmz + vmz * v - pcz - vcz * v,
+            rx + vrx * t - ax - vax * t,
+            ry + vry * t - ay - vay * t,
+            rz + vrz * t - az - vaz * t,
+            rx + vrx * u - bx - vbx * u,
+            ry + vry * u - by - vby * u,
+            rz + vrz * u - bz - vbz * u,
+            rx + vrx * v - cx - vcx * v,
+            ry + vry * v - cy - vcy * v,
+            rz + vrz * v - cz - vcz * v,
         )
     )[0]
-    return solution[pmx] + solution[pmy] + solution[pmz]
+    return solution[rx] + solution[ry] + solution[rz]
